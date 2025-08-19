@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"image/color"
+	"image/draw"
 	_ "image/jpeg"
 	"image/png"
 	"log"
@@ -34,7 +36,7 @@ func main() {
 	defer f.Close()
 
 	// decode the image
-	img, _, err := image.Decode(f)
+	src, _, err := image.Decode(f)
 	if err != nil {
 		log.Fatalf("error while decoding image: %s", err)
 	}
@@ -44,6 +46,18 @@ func main() {
 		log.Fatalf("error creating the \"%s\" directory!", OUTPUT_DIRECTORY)
 	}
 
+	// create blank canvas
+	srcBounds := src.Bounds()
+	srcRGBA := image.NewRGBA(srcBounds)
+	draw.Draw(srcRGBA, srcBounds, src, srcBounds.Min, draw.Src)
+
+	// grayscale
+	for y := srcBounds.Min.Y; y < srcBounds.Max.Y; y++ {
+		for x := srcBounds.Min.X; x < srcBounds.Max.X; x++ {
+			srcRGBA.Set(x, y, color.Gray16Model.Convert(srcRGBA.At(x, y)))
+		}
+	}
+
 	// create and open the output file
 	out, err := os.Create(fmt.Sprintf("%s/%s.%s", OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION))
 	if err != nil {
@@ -51,7 +65,7 @@ func main() {
 	}
 	defer out.Close()
 
-	if err := png.Encode(out, img); err != nil {
+	if err := png.Encode(out, srcRGBA); err != nil {
 		log.Fatal("error while encoding image!")
 	}
 
