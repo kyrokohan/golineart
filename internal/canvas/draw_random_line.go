@@ -3,6 +3,7 @@ package canvas
 import (
 	"image"
 	"image/color"
+	"math/rand"
 )
 
 func abs(a int) int {
@@ -12,7 +13,43 @@ func abs(a int) int {
 	return a
 }
 
-func DrawLine(dst *image.RGBA, x0, y0, x1, y1 int, c color.Color) {
+func generateRandomLineCoordinates(b image.Rectangle) (int, int, int, int) {
+	// get widths
+	dx := b.Dx()
+	dy := b.Dy()
+
+	// get random edges while making sure same edge never gets chosen
+	e0 := rand.Intn(4)
+	e1 := rand.Intn(3)
+	if e1 >= e0 {
+		e1++
+	}
+
+	// helper function to get point on an edge
+	pointOnEdge := func(edge int) (int, int) {
+		switch edge {
+		case 0: // top
+			return b.Min.X + rand.Intn(dx), b.Min.Y
+		case 1: // right
+			return b.Max.X - 1, b.Min.Y + rand.Intn(dy)
+		case 2: // bottom
+			return b.Min.X + rand.Intn(dx), b.Max.Y - 1
+		default: // left
+			return b.Min.X, b.Min.Y + rand.Intn(dy)
+		}
+	}
+
+	x0, y0 := pointOnEdge(e0)
+	x1, y1 := pointOnEdge(e1)
+
+	return x0, y0, x1, y1
+}
+
+func DrawRandomLine(dst *image.RGBA, c color.Color) (int, int, int, int) {
+	// get start and end points of the random line
+	x0, y0, x1, y1 := generateRandomLineCoordinates(dst.Bounds())
+
+	// the rest of this is using Bresenham's line drawing algorithm (the error version)
 	dx := abs(x1 - x0)
 
 	sx := -1
@@ -49,4 +86,6 @@ func DrawLine(dst *image.RGBA, x0, y0, x1, y1 int, c color.Color) {
 		}
 	}
 
+	// return the starting and ending coords
+	return x0, y0, x1, y1
 }

@@ -4,6 +4,7 @@ import (
 	"dark-lines/internal/canvas"
 	"dark-lines/internal/img"
 	"flag"
+	"image/color"
 	_ "image/jpeg"
 	"log"
 )
@@ -33,6 +34,10 @@ func main() {
 	// bounds := cnv.Bounds()
 	// randomStartX := rand.Intn(bounds.Max.X)
 	// randomStartY := rand.Intn(bounds.Max.Y)
+
+	for range 100 {
+		canvas.DrawRandomLine(cnv, color.Black)
+	}
 
 	// save image
 	img.SaveImage(cnv, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
