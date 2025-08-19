@@ -28,10 +28,14 @@ func main() {
 	grayscaleImage := img.ToGrayscale(*imgPath)
 
 	// generate same size white canvas
-	canvas := canvas.GenerateWhiteCanvas(grayscaleImage.Bounds())
+	cnv := canvas.GenerateWhiteCanvas(grayscaleImage.Bounds())
+
+	// bounds := cnv.Bounds()
+	// randomStartX := rand.Intn(bounds.Max.X)
+	// randomStartY := rand.Intn(bounds.Max.Y)
 
 	// save image
-	img.SaveImage(canvas, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
+	img.SaveImage(cnv, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
 
 	// Turn image into grayscale and store image data
 
