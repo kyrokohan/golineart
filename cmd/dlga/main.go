@@ -4,6 +4,7 @@ import (
 	"dark-lines/internal/canvas"
 	"dark-lines/internal/img"
 	"flag"
+	"fmt"
 	"image/color"
 	_ "image/jpeg"
 	"log"
@@ -38,6 +39,10 @@ func main() {
 	for range 100 {
 		canvas.DrawRandomLine(cnv, color.Black)
 	}
+
+	fmt.Println(img.ImageDifference(grayscaleImage, grayscaleImage))
+	fmt.Println(img.ImageDifference(cnv, cnv))
+	fmt.Println(img.ImageDifference(cnv, grayscaleImage))
 
 	// save image
 	img.SaveImage(cnv, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
