@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func ProcessImage(imgPath string) *image.RGBA {
+func ToGrayscale(imgPath string) *image.RGBA {
 	// open the image
 	f, err := os.Open(imgPath)
 	if err != nil {

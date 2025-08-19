@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dark-lines/internal/canvas"
 	"dark-lines/internal/img"
 	"flag"
 	_ "image/jpeg"
@@ -24,10 +25,13 @@ func main() {
 	}
 
 	// process image (turn to grayscale)
-	grayscaleImage := img.ProcessImage(*imgPath)
+	grayscaleImage := img.ToGrayscale(*imgPath)
+
+	// generate same size white canvas
+	canvas := canvas.GenerateWhiteCanvas(grayscaleImage.Bounds())
 
 	// save image
-	img.SaveImage(grayscaleImage, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
+	img.SaveImage(canvas, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
 
 	// Turn image into grayscale and store image data
 
