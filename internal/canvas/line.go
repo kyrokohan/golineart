@@ -95,9 +95,9 @@ func GenerateRandomLineCoordinates(r *rand.Rand, b image.Rectangle) types.Line {
 	return line
 }
 
-func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint8) {
+func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint) {
 	src := image.NewUniform(c)
-	mask := image.NewUniform(color.Alpha{alpha})
+	mask := image.NewUniform(color.Alpha{uint8(alpha)})
 
 	for i := range len(line.Pixels) {
 		p1 := line.Pixels[i]
@@ -108,7 +108,7 @@ func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint8) {
 	}
 }
 
-func DrawBestOfNLines(dst, src *image.RGBA, n int, c color.RGBA, workers int) uint64 {
+func DrawBestOfNLines(dst, src *image.RGBA, n int, c color.RGBA, alpha uint, workers int) uint64 {
 	if n <= 0 {
 		return 0
 	}
@@ -149,7 +149,7 @@ func DrawBestOfNLines(dst, src *image.RGBA, n int, c color.RGBA, workers int) ui
 				clone := img.CloneImage(dst)
 
 				// draw random line on it and get the difference
-				DrawLine(clone, line, c, 51)
+				DrawLine(clone, line, c, alpha)
 				after, err := img.LineDiff(clone, src, line)
 				if err != nil {
 					results <- result{err: err}
