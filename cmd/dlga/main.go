@@ -8,6 +8,8 @@ import (
 	"image/color"
 	_ "image/jpeg"
 	"log"
+	"math/rand/v2"
+	"strconv"
 )
 
 const (
@@ -32,27 +34,27 @@ func main() {
 	// generate same size white canvas
 	cnv := canvas.GenerateWhiteCanvas(grayscaleImage.Bounds())
 
-	// bounds := cnv.Bounds()
-	// randomStartX := rand.Intn(bounds.Max.X)
-	// randomStartY := rand.Intn(bounds.Max.Y)
+	// generate a bunch of lines to get a good result
+	for i := range 10000 {
+		bow := rand.IntN(2)
 
-	for range 100 {
-		canvas.DrawRandomLine(cnv, color.Black)
+		// choose randomly between black or white line
+		c := color.RGBA{255, 255, 255, 255}
+		if bow == 1 {
+			c = color.RGBA{0, 0, 0, 255}
+		}
+
+		// choose and draw the best out of N lines
+		canvas.DrawBestOfNLines(cnv, grayscaleImage, 100, c, 0)
+
+		// save img and log progress periodically
+		if i%100 == 0 {
+			img.SaveImage(cnv, OUTPUT_DIRECTORY, strconv.Itoa(i), OUTPUT_FILE_EXTENSION)
+		}
+		fmt.Printf("Generated %d/%d\r", i+1, 10000)
 	}
 
-	fmt.Println(img.ImageDifference(grayscaleImage, grayscaleImage))
-	fmt.Println(img.ImageDifference(cnv, cnv))
-	fmt.Println(img.ImageDifference(cnv, grayscaleImage))
-
-	// save image
-	img.SaveImage(cnv, OUTPUT_DIRECTORY, OUTPUT_FILE_NAME, OUTPUT_FILE_EXTENSION)
-
-	// Turn image into grayscale and store image data
-
-	// Create a blank canvas the same size as the image
-
-	// Draw 1000 random lines on the canvas
-
-	// Save the canvas as a png
-
+	// save the final image
+	img.SaveImage(cnv, OUTPUT_DIRECTORY, "final", OUTPUT_FILE_EXTENSION)
+	fmt.Println("\nDone!")
 }

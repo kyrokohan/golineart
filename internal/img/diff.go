@@ -1,30 +1,37 @@
 package img
 
 import (
+	"dark-lines/internal/types"
 	"errors"
 	"image"
 )
 
-func ImageDifference(a, b *image.RGBA) (float64, error) {
+func LineDiff(a, b *image.RGBA, line types.Line) (uint64, error) {
+	x0, y0, x1, y1 := line.X0, line.Y0, line.X1, line.Y1
+	r := a.Bounds()
+
 	if !a.Rect.Eq(b.Rect) {
 		return 0, errors.New("images must have identical bounds")
 	}
-	r := a.Rect
-	w, h := r.Dx(), r.Dy()
 
-	// get mean squared error over RGB of the image.
-	var sum uint64
-	for y := r.Min.Y; y < r.Max.Y; y++ {
-		ia := a.PixOffset(r.Min.X, y)
-		ib := b.PixOffset(r.Min.X, y)
-		for range w {
-			dr := int(a.Pix[ia+0]) - int(b.Pix[ib+0])
-			dg := int(a.Pix[ia+1]) - int(b.Pix[ib+1])
-			db := int(a.Pix[ia+2]) - int(b.Pix[ib+2])
-			sum += uint64(dr*dr + dg*dg + db*db)
-			ia += 4
-			ib += 4
-		}
+	if x0 < r.Min.X || x1 >= r.Max.X || y0 < r.Min.Y || y1 >= r.Max.Y {
+		return 0, errors.New("line has out of bounds pixels")
 	}
-	return float64(sum) / float64(3*w*h), nil
+
+	var sum uint64
+	for i := range len(line.Pixels) {
+		// extract the x and y
+		x, y := line.Pixels[i].X, line.Pixels[i].Y
+
+		// get the colors of canvas and src
+		ar, ag, ab, _ := a.At(x, y).RGBA()
+		br, bg, bb, _ := b.At(x, y).RGBA()
+
+		// get MSE of the RGB
+		dr, dg, db := int(ar)-int(br), int(ag)-int(bg), int(ab)-int(bb)
+
+		sum += uint64(dr*dr + dg*dg + db*db)
+	}
+
+	return sum, nil
 }
