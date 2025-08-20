@@ -1,10 +1,10 @@
 package main
 
 import (
-	"dark-lines/internal/canvas"
-	"dark-lines/internal/img"
 	"flag"
 	"fmt"
+	"golineart/internal/canvas"
+	"golineart/internal/img"
 	"image/color"
 	_ "image/jpeg"
 	"log"
@@ -72,7 +72,7 @@ func main() {
 		if *saveFrequency != 0 && i%*saveFrequency == 0 {
 			img.SaveImage(cnv, *outputDir, strconv.Itoa(i), *outputExt)
 		}
-		fmt.Printf("Generated %d/%d\r", i+1, *rounds)
+		fmt.Printf("Generating (%d/%d)\r", i+1, *rounds)
 	}
 
 	// save the final image

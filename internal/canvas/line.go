@@ -1,8 +1,8 @@
 package canvas
 
 import (
-	"dark-lines/internal/img"
-	"dark-lines/internal/types"
+	"golineart/internal/img"
+	"golineart/internal/types"
 	"image"
 	"image/color"
 	"image/draw"

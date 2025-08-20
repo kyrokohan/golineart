@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go build -o bin/dlga cmd/dlga/main.go
+go build -o bin/gla cmd/gla/main.go

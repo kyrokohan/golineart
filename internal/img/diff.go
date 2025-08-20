@@ -1,8 +1,8 @@
 package img
 
 import (
-	"dark-lines/internal/types"
 	"errors"
+	"golineart/internal/types"
 	"image"
 )
 
