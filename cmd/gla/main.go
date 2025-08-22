@@ -7,6 +7,7 @@ import (
 	"golineart/internal/img"
 	"image/color"
 	_ "image/jpeg"
+	_ "image/png"
 	"log"
 	"math/rand/v2"
 	"os"
@@ -16,7 +17,7 @@ import (
 const (
 	OUTPUT_DIRECTORY = "out"
 	OUTPUT_FILE      = "final"
-	OUTPUT_EXTENSION = "png"
+	OUTPUT_EXTENSION = "jpeg"
 )
 
 func main() {

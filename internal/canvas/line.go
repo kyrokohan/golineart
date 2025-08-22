@@ -3,6 +3,7 @@ package canvas
 import (
 	"golineart/internal/img"
 	"golineart/internal/types"
+	"golineart/internal/utils"
 	"image"
 	"image/color"
 	"image/draw"
@@ -95,7 +96,7 @@ func GenerateRandomLineCoordinates(r *rand.Rand, b image.Rectangle) types.Line {
 	return line
 }
 
-func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint) {
+func DrawLineOld(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint) {
 	src := image.NewUniform(c)
 	mask := image.NewUniform(color.Alpha{uint8(alpha)})
 
@@ -105,6 +106,19 @@ func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint) {
 		p2.X += 1
 		p2.Y += 1
 		draw.DrawMask(dst, image.Rectangle{p1, p2}, src, image.Point{}, mask, image.Point{}, draw.Over)
+	}
+}
+
+func DrawLine(dst *image.RGBA, line types.Line, c color.RGBA, alpha uint) {
+	for i := range len(line.Pixels) {
+		p := line.Pixels[i]
+		idx := dst.PixOffset(p.X, p.Y)
+
+		r1, g1, b1 := utils.ApplyAlpha(dst, c, alpha, idx)
+
+		dst.Pix[idx] = uint8(r1)
+		dst.Pix[idx+1] = uint8(g1)
+		dst.Pix[idx+2] = uint8(b1)
 	}
 }
 
@@ -139,18 +153,13 @@ func DrawBestOfNLines(dst, src *image.RGBA, n int, c color.RGBA, alpha uint, wor
 			for range jobs {
 				line := GenerateRandomLineCoordinates(r, dst.Bounds())
 
-				base, err := img.LineDiff(dst, src, line)
+				base, err := img.LineDiff(dst, src, line, c, alpha, false)
 				if err != nil {
 					results <- result{err: err}
 					continue
 				}
 
-				// create temporary canvas
-				clone := img.CloneImage(dst)
-
-				// draw random line on it and get the difference
-				DrawLine(clone, line, c, alpha)
-				after, err := img.LineDiff(clone, src, line)
+				after, err := img.LineDiff(dst, src, line, c, alpha, true)
 				if err != nil {
 					results <- result{err: err}
 					continue
@@ -184,7 +193,7 @@ func DrawBestOfNLines(dst, src *image.RGBA, n int, c color.RGBA, alpha uint, wor
 	}
 
 	if best.delta > 0 {
-		DrawLine(dst, best.line, c, 51)
+		DrawLine(dst, best.line, c, alpha)
 		return best.after
 	}
 
