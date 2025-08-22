@@ -2,10 +2,11 @@ package img
 
 import (
 	"errors"
-	"golineart/internal/types"
-	"golineart/internal/utils"
 	"image"
 	"image/color"
+
+	"github.com/kyrokohan/golineart/internal/types"
+	"github.com/kyrokohan/golineart/internal/utils"
 )
 
 func checkCompat(a, b *image.RGBA, line types.Line) error {

@@ -4,52 +4,33 @@ set -Eeuo pipefail
 usage() {
   cat >&2 <<'EOF'
 Usage:
-  run_gla.sh <folder> [options]
+  bulk_gen.sh <folder> [GLA flags...]
 
-Options (forwarded to ./bin/gla if provided):
-  -alpha N   | --alpha N
-  -lines N   | --lines N
-  -rounds N  | --rounds N
-  -oext EXT  | --oext EXT
-  -sfreq N   | --sfreq N
-  -odir DIR  | --odir DIR
+All arguments after <folder> are forwarded directly to ./bin/gla, unchanged.
 
 Notes:
-- Only .jpeg and .png files are processed (recursively).
+- Only .jpeg, .jpg, and .png files are processed (recursively).
 - Each image's base filename (without extension) is passed as -ofile.
+
+Examples:
+  ./scripts/bulk_gen.sh ./photos --rounds 20000 --lines 400 --alpha 51 --oext png --odir out
+  ./scripts/bulk_gen.sh ./photos -rounds 30000 -sfreq 200 -oext jpeg
 EOF
 }
 
-dir=""
-alpha=""; lines=""; rounds=""; oext=""; sfreq=""; odir=""
-
-# Parse args (accepts -flag and --flag forms)
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -h|--help) usage; exit 0 ;;
-    -alpha|--alpha)   alpha="${2:?missing value for $1}"; shift 2 ;;
-    -lines|--lines)   lines="${2:?missing value for $1}"; shift 2 ;;
-    -rounds|--rounds) rounds="${2:?missing value for $1}"; shift 2 ;;
-    -oext|--oext)     oext="${2:?missing value for $1}"; shift 2 ;;
-    -sfreq|--sfreq)   sfreq="${2:?missing value for $1}"; shift 2 ;;
-    -odir|--odir)     odir="${2:?missing value for $1}"; shift 2 ;;
-    --) shift; break ;;
-    -*)
-      echo "Unknown option: $1" >&2
-      usage; exit 1 ;;
-    *)
-      if [[ -z "$dir" ]]; then dir="$1"; else
-        echo "Unexpected extra argument: $1" >&2
-        usage; exit 1
-      fi
-      shift ;;
-  esac
-done
-
-if [[ -z "$dir" ]]; then
+if [[ $# -lt 1 ]]; then
   echo "Error: folder argument is required." >&2
   usage; exit 1
 fi
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  usage; exit 0
+fi
+
+dir="$1"
+shift || true
+gla_args=("$@")
+
 if [[ ! -d "$dir" ]]; then
   echo "Error: '$dir' is not a directory." >&2
   exit 1
@@ -59,20 +40,6 @@ if [[ ! -x ./bin/gla ]]; then
   exit 1
 fi
 
-# If an output directory was provided, ensure it exists
-if [[ -n "$odir" ]]; then
-  mkdir -p "$odir"
-fi
-
-# Build args to forward to ./bin/gla
-gla_args=()
-[[ -n "$alpha"  ]] && gla_args+=(-alpha  "$alpha")
-[[ -n "$lines"  ]] && gla_args+=(-lines  "$lines")
-[[ -n "$rounds" ]] && gla_args+=(-rounds "$rounds")
-[[ -n "$oext"   ]] && gla_args+=(-oext   "$oext")
-[[ -n "$sfreq"  ]] && gla_args+=(-sfreq  "$sfreq")
-[[ -n "$odir"   ]] && gla_args+=(-odir   "$odir")
-
 # Find only .jpeg and .png (case-insensitive), recursively, safely handle spaces/NULs
 find "$dir" -type f \( -iname '*.jpeg' -o -iname '*.png' -o -iname '*.jpg' \) -print0 |
 while IFS= read -r -d '' img; do
@@ -80,5 +47,9 @@ while IFS= read -r -d '' img; do
   name_no_ext="${base%.*}"   # e.g., "photo" from "photo.png"
 
   echo "Processing: $img"
-  ./bin/gla "${gla_args[@]}" -ofile "$name_no_ext" "$img"
+  if (( ${#gla_args[@]} > 0 )); then
+    ./bin/gla "${gla_args[@]}" -ofile "$name_no_ext" "$img"
+  else
+    ./bin/gla -ofile "$name_no_ext" "$img"
+  fi
 done

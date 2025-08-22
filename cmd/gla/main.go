@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"golineart/internal/canvas"
-	"golineart/internal/img"
 	"image/color"
 	_ "image/jpeg"
 	_ "image/png"
@@ -12,6 +10,9 @@ import (
 	"math/rand/v2"
 	"os"
 	"strconv"
+
+	"github.com/kyrokohan/golineart/internal/canvas"
+	"github.com/kyrokohan/golineart/internal/img"
 )
 
 const (
@@ -30,8 +31,8 @@ func main() {
 	}
 
 	// set up and parse flags
-	rounds := flag.Int("rounds", 10000, "total number of rounds (lines) to generate")
-	linesPerRound := flag.Int("lines", 100, "total number of lines to choose from per round")
+	rounds := flag.Int("rounds", 25000, "total number of rounds (lines) to generate")
+	linesPerRound := flag.Int("lines", 200, "total number of lines to choose from per round")
 	outputDir := flag.String("odir", OUTPUT_DIRECTORY, "output directory")
 	outputFile := flag.String("ofile", OUTPUT_FILE, "name of the final output file")
 	outputExt := flag.String("oext", OUTPUT_EXTENSION, "output extension")

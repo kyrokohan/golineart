@@ -1,9 +1,6 @@
 package canvas
 
 import (
-	"golineart/internal/img"
-	"golineart/internal/types"
-	"golineart/internal/utils"
 	"image"
 	"image/color"
 	"image/draw"
@@ -12,6 +9,10 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/kyrokohan/golineart/internal/img"
+	"github.com/kyrokohan/golineart/internal/types"
+	"github.com/kyrokohan/golineart/internal/utils"
 )
 
 func abs(a int) int {
