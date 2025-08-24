@@ -31,13 +31,13 @@ func main() {
 	}
 
 	// set up and parse flags
-	rounds := flag.Int("rounds", 25000, "total number of rounds (lines) to generate")
-	linesPerRound := flag.Int("lines", 200, "total number of lines to choose from per round")
+	rounds := flag.Int("rounds", 100000, "total number of rounds (lines) to generate")
+	linesPerRound := flag.Int("lines", 100, "total number of lines to choose from per round")
 	outputDir := flag.String("odir", OUTPUT_DIRECTORY, "output directory")
 	outputFile := flag.String("ofile", OUTPUT_FILE, "name of the final output file")
 	outputExt := flag.String("oext", OUTPUT_EXTENSION, "output extension")
 	saveFrequency := flag.Int("sfreq", 0, "how many generated lines before saving the image")
-	alpha := flag.Uint("alpha", 51, "opacity of the lines generated between [0, 255]")
+	alpha := flag.Uint("alpha", 10, "opacity of the lines generated between [0, 255]")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])

@@ -1,6 +1,18 @@
 ## GoLineArt (GLA)
 
-Turn images into grayscale line-art by iteratively drawing the best line that reduces error versus the target image.
+#### Turn images into grayscale line-art by iteratively drawing the best line that reduces error versus the target image.
+
+![](./examples/sistine-chapel.gif)
+
+
+### Examples
+
+Original                   | Output 
+:-------------------------:|:-------------------------:
+![](./examples/originals/mona-lisa.jpg)  |  ![](./examples/outputs/mona-lisa.jpeg)
+
+> More examples are available under the `examples` directory. These examples were generated using the following configuration:
+> `-alpha 10 -rounds 100000 -lines 100`
 
 ### Install
 - Requires a recent Go toolchain (module sets `go 1.24.4`).
@@ -15,15 +27,15 @@ go build -o bin/gla cmd/gla/main.go
 ```bash
 ./bin/gla path/to/image.jpg
 ```
-Defaults: `-rounds 25000`, `-lines 200`, `-alpha 51`, `-odir out`, `-ofile final`, `-oext jpeg`.
+Defaults: `-rounds 100000`, `-lines 100`, `-alpha 10`, `-odir out`, `-ofile final`, `-oext jpeg`.
 
 ### Usage
 ```bash
 ./bin/gla [flags] <image>
 ```
-- `-rounds int`  total rounds (lines) to draw (default 25000)
-- `-lines int`   candidates per round (default 200)
-- `-alpha uint`  opacity [0–255] (default 51)
+- `-rounds int`  total rounds (lines) to draw (default 100000)
+- `-lines int`   candidates per round (default 100)
+- `-alpha uint`  opacity [0–255] (default 10)
 - `-sfreq int`   save every N rounds (0 disables)
 - `-odir string` output directory (default `out`)
 - `-ofile string` output base name (default `final`)
@@ -34,7 +46,7 @@ Examples:
 # Higher detail, save progress frames every 200 rounds, PNG output
 ./bin/gla -rounds 30000 -lines 500 -sfreq 200 -oext png path/to/image.png
 
-# Subtler lines
+# Different alpha
 ./bin/gla -alpha 32 path/to/image.jpg
 ```
 
