@@ -15,6 +15,19 @@ Original                   | Output
 > `-alpha 10 -rounds 100000 -lines 100`
 
 ### Install
+
+#### Option 1: Download pre-built binaries
+Download the latest release from the [Releases page](https://github.com/kyrokohan/golineart/releases).
+
+```bash
+# Linux/macOS: Make the binary executable
+chmod +x golineart-<os>-<arch>
+
+# Example for macOS on Apple Silicon
+chmod +x golineart-darwin-arm64
+```
+
+#### Option 2: Build from source
 - Requires a recent Go toolchain (module sets `go 1.24.4`).
 - Build the CLI:
 ```bash
@@ -24,13 +37,34 @@ go build -o bin/gla cmd/gla/main.go
 ```
 
 ### Quick start
+
+#### Using pre-built binaries
+```bash
+# macOS (Apple Silicon)
+./golineart-darwin-arm64 path/to/image.jpg
+
+# Linux (x86_64)
+./golineart-linux-amd64 path/to/image.jpg
+```
+
+```powershell
+# Windows (PowerShell)
+.\golineart-windows-amd64.exe path\to\image.jpg
+```
+
+#### Using locally built binary
 ```bash
 ./bin/gla path/to/image.jpg
 ```
+
 Defaults: `-rounds 100000`, `-lines 100`, `-alpha 10`, `-odir out`, `-ofile final`, `-oext jpeg`.
 
 ### Usage
 ```bash
+# For pre-built binaries
+golineart-<os>-<arch> [flags] <image>
+
+# For locally built binary
 ./bin/gla [flags] <image>
 ```
 - `-rounds int`  total rounds (lines) to draw (default 100000)
@@ -67,6 +101,10 @@ Examples:
 - Converts the input to grayscale and creates a white canvas of the same size.
 - For each round, samples N random edge-to-edge lines, picks the one that best lowers MSE, and draws it with the given opacity.
 - Uses all CPU cores to evaluate candidates per round.
+
+## Releases
+
+See the [Releases page](https://github.com/kyrokohan/golineart/releases) for download links and release notes.
 
 ## License
 
